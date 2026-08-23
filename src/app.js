@@ -13,9 +13,11 @@ app.use(cookieParser());
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
+const classRouter = require("./routes/class");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", classRouter);
 
 const PORT = process.env.PORT || 3000;
 
