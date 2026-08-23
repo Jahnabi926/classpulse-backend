@@ -12,8 +12,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
 
 app.use("/", authRouter);
+app.use("/", profileRouter);
 
 const PORT = process.env.PORT || 3000;
 

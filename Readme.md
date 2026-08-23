@@ -30,7 +30,7 @@ backend/
 
 - [x] Project structure set up
 - [x] Server connected to MongoDB Atlas (connects before accepting requests)
-- [ ] Authentication (signup/login)
+- [x] Authentication (signup/login)
 - [ ] Class, Attendance, Homework APIs
 - [ ] Live quiz via Socket.io
 
