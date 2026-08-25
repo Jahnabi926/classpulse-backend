@@ -26,4 +26,26 @@ classRouter.post("/class/create", userAuth, async (req, res) => {
   }
 });
 
+classRouter.post("/class/join", userAuth, async (req, res) => {
+  try {
+    const { joinCode } = req.body;
+
+    const grade = await Class.findOne({ joinCode: joinCode });
+    if (!grade) {
+      throw new Error("Enter the Correct Code !");
+    }
+    let studentsArray = grade.students;
+    if (studentsArray.includes(req.user._id)) {
+      throw new Error("Student already joined");
+    }
+    studentsArray.push(req.user._id);
+    const savedGrade = await grade.save();
+    res.json({
+      message: "Student joined the class successfully",
+      data: savedGrade,
+    });
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message);
+  }
+});
 module.exports = classRouter;
