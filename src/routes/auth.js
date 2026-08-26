@@ -28,7 +28,10 @@ authRouter.post("/signup", async (req, res) => {
     // Send the token to the browser inside a secure cookie
     const token = await user.getJWT();
     res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true }); // expires in 24 hours
-    res.json({ message: "User added successfully", data: savedUser });
+    res.json({
+      message: `${user.firstName} signedIn successfully`,
+      data: savedUser,
+    });
   } catch (error) {
     if (error.code === 11000) {
       return res.status(400).send("ERROR: Email already registered");
@@ -59,7 +62,10 @@ authRouter.post("/login", async (req, res) => {
         httpOnly: true,
       });
 
-      res.json({ message: "Login Successful !", data: user });
+      res.json({
+        message: `${user.firstName} loggedIn Successfully !`,
+        data: user,
+      });
     } else {
       throw new Error("Invalid Credentials");
     }

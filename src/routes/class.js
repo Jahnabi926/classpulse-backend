@@ -29,23 +29,47 @@ classRouter.post("/class/create", userAuth, async (req, res) => {
 classRouter.post("/class/join", userAuth, async (req, res) => {
   try {
     const { joinCode } = req.body;
+    const { _id, firstName } = req.user;
 
     const grade = await Class.findOne({ joinCode: joinCode });
     if (!grade) {
       throw new Error("Enter the Correct Code !");
     }
     let studentsArray = grade.students;
-    if (studentsArray.includes(req.user._id)) {
-      throw new Error("Student already joined");
+    if (studentsArray.includes(_id)) {
+      throw new Error(`${firstName} already joined`);
     }
-    studentsArray.push(req.user._id);
+    studentsArray.push(_id);
     const savedGrade = await grade.save();
     res.json({
-      message: "Student joined the class successfully",
+      message: `${firstName} joined the class successfully`,
       data: savedGrade,
     });
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
 });
+
+classRouter.post("/class/leave", userAuth, async (req, res) => {
+  try {
+    const { classId } = req.body;
+    const { _id, firstName } = req.user;
+    const grade = await Class.findById(classId);
+    if (!grade) {
+      throw new Error("Class not found");
+    }
+    if (!grade.students.includes(_id)) {
+      throw new Error(`${firstName} already left the class`);
+    }
+    grade.students = grade.students.filter((id) => !id.equals(_id));
+    const savedGrade = await grade.save();
+    res.json({
+      message: `${firstName} left the class Successfully`,
+      data: savedGrade,
+    });
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message);
+  }
+});
+
 module.exports = classRouter;
