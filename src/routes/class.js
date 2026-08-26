@@ -72,4 +72,28 @@ classRouter.post("/class/leave", userAuth, async (req, res) => {
   }
 });
 
+classRouter.get("/class/:classId", userAuth, async (req, res) => {
+  const { classId } = req.params;
+
+  try {
+    const grade = await Class.findById({
+      _id: classId,
+    })
+      .populate("teacherId", "firstName lastName emailId role")
+      .populate("students", "firstName lastName emailId role");
+    if (!grade) {
+      throw new Error("Class not found");
+    }
+    const isTeacher = grade.teacherId.equals(req.user._id);
+    const isStudent = grade.students.some((id) => id.equals(req.user._id));
+
+    if (!isTeacher && !isStudent) {
+      throw new Error("You don't belong to the class");
+    }
+    res.json({ message: "Class details fetched successfully", data: grade });
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message);
+  }
+});
+
 module.exports = classRouter;
