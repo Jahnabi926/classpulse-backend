@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ClassPulse Socket Test</title>
+</head>
+<body>
+  <h2>Step 1: Log in (sets the cookie in THIS browser/tab)</h2>
+  <input id="email" placeholder="email" /><br>
+  <input id="password" placeholder="password" type="password" /><br>
+  <button onclick="login()">Login</button>
+  <p id="loginStatus"></p>
+
+  <h2>Step 2: Connect + Join Class</h2>
+  <button onclick="connectSocket()">Connect Socket</button><br><br>
+  <input id="classId" placeholder="classId" style="width: 300px;" />
+  <button onclick="joinClass()">Join Class</button>
+
+  <h2>Step 3: Teacher actions</h2>
+  <input id="question" placeholder="question text" value="What is 2+2?" /><br>
+  <input id="options" placeholder="options, comma separated" value="3,4,5" /><br>
+  <button onclick="startQuestion()">Start Question</button>
+  <button onclick="endQuestion()">End Question</button>
+
+  <h2>Step 4: Student actions</h2>
+  <input id="answer" placeholder="answer" value="4" />
+  <button onclick="submitAnswer()">Submit Answer</button>
+
+  <p><b>Open browser console (F12) for all logs. Use TWO separate tabs — one as teacher, one as student.</b></p>
+
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+  <script>
+    let socket = null;
+
+    async function login() {
+      const emailId = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ emailId, password }),
+      });
+
+      const data = await res.json();
+      document.getElementById("loginStatus").innerText =
+        res.ok ? `Logged in as ${data.data.firstName} (${data.data.role})` : "Login failed: " + JSON.stringify(data);
+      console.log("Login response:", data);
+    }
+
+    function connectSocket() {
+      socket = io("http://localhost:3000", { withCredentials: true });
+
+      socket.on("connect", () => console.log("✅ Connected! Socket ID:", socket.id));
+      socket.on("connect_error", (err) => console.error("❌ Connection failed:", err.message));
+      socket.on("error", (err) => console.error("⚠️ Server error event:", err.message));
+
+      // Listeners for events the SERVER broadcasts back
+      socket.on("new-question", (data) => console.log("📢 new-question received:", data));
+      socket.on("answers-received", (data) => console.log("📊 answers-received:", data));
+      socket.on("quiz-results", (data) => console.log("🏁 quiz-results:", data));
+    }
+
+    function joinClass() {
+      const classId = document.getElementById("classId").value;
+      socket.emit("joinClass", { classId });
+      console.log("Emitted joinClass:", classId);
+    }
+
+    function startQuestion() {
+      const classId = document.getElementById("classId").value;
+      const question = document.getElementById("question").value;
+      const options = document.getElementById("options").value.split(",");
+      socket.emit("start-question", { classId, question, options });
+      console.log("Emitted start-question");
+    }
+
+    function submitAnswer() {
+      const classId = document.getElementById("classId").value;
+      const answer = document.getElementById("answer").value;
+      socket.emit("submit-answer", { classId, answer });
+      console.log("Emitted submit-answer:", answer);
+    }
+
+    function endQuestion() {
+      const classId = document.getElementById("classId").value;
+      socket.emit("end-question", { classId });
+      console.log("Emitted end-question");
+    }
+  </script>
+</body>
+</html>

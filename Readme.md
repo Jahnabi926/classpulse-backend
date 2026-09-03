@@ -2,7 +2,7 @@
 
 ## About
 
-An app for teachers and students to manage classroom engagement — teachers can mark attendance, run live quizzes, and post homework, while students can track their attendance, join live quizzes, and view assignments.
+An app for teachers and students to manage classroom engagement — teachers can create classes, mark attendance, and run live quizzes, while students can join classes via code and participate in live quizzes.
 
 # ClassPulse — Backend
 
@@ -29,15 +29,37 @@ backend/
 ## Status
 
 - [x] Project structure set up
-- [x] Server connected to MongoDB Atlas (connects before accepting requests)
-- [x] Authentication (signup/login)
-- [ ] Class, Attendance, Homework APIs
+- [x] Server connected to MongoDB Atlas
+- [x] Authentication (signup, login, logout, JWT middleware)
+- [x] Classes (create, join by code, leave, view details with populated data)
 - [ ] Live quiz via Socket.io
+- [ ] Attendance (stretch goal)
+
+**Why Socket.io instead of regular HTTP routes(signup, login, class/create, etc.)?**:
+HTTP is request/response — the client asks, the server answers once, done. If something changes later, the server has no way to tell the client; the client would have to ask again. Socket.io keeps one connection open in both directions, so the server can push updates the instant something happens, with no request needed. ClassPulse needs this for live quizzes: when a teacher starts a question, every student's screen must update at the same moment, without refreshing. That's only possible if the server can proactively push data — which plain HTTP can't do, but an open Socket.io connection can.
+
+## API Endpoints
+
+**Auth**
+
+- `POST /signup` — create account (teacher or student)
+- `POST /login`
+- `POST /logout`
+- `GET /profile/view` — protected
+
+**Classes**
+
+- `POST /class/create` — protected, teacher creates a class with a random join code
+- `POST /class/join` — protected, student joins via join code
+- `POST /class/leave` — protected
+- `GET /class/:classId` — protected, only visible to the teacher or joined students
 
 ## Getting Started
 
-```bash
+\`\`\`bash
 npm install
-# add a .env file with PORT, MONGODB_URI, JWT_SECRET
+
+# add a .env file with PORT, DB_CONNECTION_SECRET, JWT_SECRET
+
 npm run dev
-```
+\`\`\`

@@ -76,9 +76,7 @@ classRouter.get("/class/:classId", userAuth, async (req, res) => {
   const { classId } = req.params;
 
   try {
-    const grade = await Class.findById({
-      _id: classId,
-    })
+    const grade = await Class.findById(classId)
       .populate("teacherId", "firstName lastName emailId role")
       .populate("students", "firstName lastName emailId role");
     if (!grade) {
