@@ -32,7 +32,7 @@ backend/
 - [x] Server connected to MongoDB Atlas
 - [x] Authentication (signup, login, logout, JWT middleware)
 - [x] Classes (create, join by code, leave, view details with populated data)
-- [ ] Live quiz via Socket.io
+- [x] Live quiz via Socket.io
 - [ ] Attendance (stretch goal)
 
 **Why Socket.io instead of regular HTTP routes(signup, login, class/create, etc.)?**:
@@ -53,6 +53,13 @@ HTTP is request/response — the client asks, the server answers once, done. If 
 - `POST /class/join` — protected, student joins via join code
 - `POST /class/leave` — protected
 - `GET /class/:classId` — protected, only visible to the teacher or joined students
+
+**Live Quiz (Socket.io events)**
+
+- `joinClass` — client emits with `{ classId }`, puts the socket into that class's room
+- `start-question` — teacher emits with `{ classId, question, options }`, broadcasts `new-question` to the room
+- `submit-answer` — student emits with `{ classId, answer }`, broadcasts `answers-received` tally to the room
+- `end-question` — teacher emits with `{ classId }`, broadcasts `quiz-results` and clears server state
 
 ## Getting Started
 
