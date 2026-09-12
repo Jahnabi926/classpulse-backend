@@ -72,6 +72,22 @@ classRouter.post("/class/leave", userAuth, async (req, res) => {
   }
 });
 
+classRouter.get("/class/my-classes", userAuth, async (req, res) => {
+  try {
+    const { _id, role } = req.user;
+    let classes;
+
+    if (role == "teacher") {
+      classes = await Class.find({ teacherId: _id });
+    } else {
+      classes = await Class.find({ students: _id });
+    }
+    res.json({ message: "Classes fetched", data: classes });
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message);
+  }
+});
+
 classRouter.get("/class/:classId", userAuth, async (req, res) => {
   const { classId } = req.params;
 
