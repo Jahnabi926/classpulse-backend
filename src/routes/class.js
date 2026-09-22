@@ -6,6 +6,9 @@ const classRouter = express.Router();
 classRouter.post("/class/create", userAuth, async (req, res) => {
   try {
     const { className, subject } = req.body;
+    if (!className || !subject) {
+      throw new Error("Please enter both a class name and a subject.");
+    }
     const teacherId = req.user._id;
 
     const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
