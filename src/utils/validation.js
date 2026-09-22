@@ -4,8 +4,10 @@ const ValidateSignUpData = (req) => {
   const { firstName, lastName, emailId, password, role } = req.body;
   const roles = ["teacher", "student"];
 
-  if (!firstName || !lastName) {
-    throw new Error("Name is not valid");
+  if (!firstName || firstName.length < 4) {
+    throw new Error("First name must be at least 4 characters");
+  } else if (!lastName) {
+    throw new Error("Last name is required");
   } else if (!validator.isEmail(emailId)) {
     throw new Error("Email is not valid");
   } else if (!validator.isStrongPassword(password)) {
@@ -14,5 +16,4 @@ const ValidateSignUpData = (req) => {
     throw new Error("Please select your role !");
   }
 };
-
 module.exports = ValidateSignUpData;
