@@ -34,7 +34,9 @@ classRouter.post("/class/join", userAuth, async (req, res) => {
     const { joinCode } = req.body;
     const { _id, firstName } = req.user;
 
-    const grade = await Class.findOne({ joinCode: joinCode });
+    const grade = await Class.findOne({
+      joinCode: joinCode?.trim().toUpperCase(),
+    });
     if (!grade) {
       throw new Error("Enter the Correct Code !");
     }
