@@ -28,7 +28,12 @@ authRouter.post("/signup", async (req, res) => {
 
     // Send the token to the browser inside a secure cookie
     const token = await user.getJWT();
-    res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true }); // expires in 24 hours
+    res.cookie("token", token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    }); // expires in 24 hours
     res.json({
       message: `${user.firstName} signedIn successfully`,
       data: savedUser,
@@ -61,6 +66,8 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       });
 
       res.json({
