@@ -31,8 +31,8 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true, // Force true so it works across Render & Vercel
+      sameSite: "none", // Force "none" for cross-domain cookie sharing
     }); // expires in 24 hours
     res.json({
       message: `${user.firstName} signedIn successfully`,
@@ -66,8 +66,8 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: true, // Force true so it works across Render & Vercel
+        sameSite: "none", // Force "none" for cross-domain cookie sharing
       });
 
       res.json({
@@ -86,8 +86,8 @@ authRouter.post("/logout", async (req, res) => {
   res.clearCookie("token", {
     path: "/",
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: true, // Force true so it works across Render & Vercel
+    sameSite: "none", // Force "none" for cross-domain cookie sharing
   });
   res.json({ message: "Logged out successfully" });
 });
