@@ -84,6 +84,7 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", async (req, res) => {
   res.clearCookie("token", {
+    path: "/",
     httpOnly: true,
     secure: true,
     sameSite: "none",
