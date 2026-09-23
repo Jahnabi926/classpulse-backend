@@ -6,7 +6,7 @@ const activeQuestions = {}; // { classId: { question, options, answers: {} } }, 
 const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: "https://classpulse-frontend-three.vercel.app",
       credentials: true, // required so the cookie is sent during the handshake
     },
   });
