@@ -20,11 +20,13 @@ app.use(cookieParser());
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const classRouter = require("./routes/class");
+const quizRouter = require("./routes/quiz");
 const initializeSocket = require("./sockets/quizSocket");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", classRouter);
+app.use("/", quizRouter);
 
 const server = http.createServer(app);
 initializeSocket(server);
