@@ -1,12 +1,13 @@
 const { Server } = require("socket.io");
 const socketAuth = require("./socketAuth");
 const Class = require("../models/class");
+const allowedOrigins = require("../config/origins");
 
 const activeQuestions = {}; // { classId: { question, options, answers: {} } }, activeQuestions lives only in your server's memory unless stored in mongodb or redis in a production version. if the server restarts, it's gone.
 const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://classpulse-frontend-three.vercel.app",
+      origin: allowedOrigins,
       credentials: true, // required so the cookie is sent during the handshake
     },
   });

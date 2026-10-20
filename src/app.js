@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const http = require("http");
+const allowedOrigins = require("./config/origins");
 
 const connectDB = require("./config/database");
 
@@ -10,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://classpulse-frontend-three.vercel.app",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
